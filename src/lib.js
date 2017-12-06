@@ -1,4 +1,4 @@
-var shuffle = function(a) {
+window.shuffle = function(a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
@@ -8,54 +8,59 @@ var shuffle = function(a) {
     }
 }
 
-var randint = function(min, max) {
+window.randint = function(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-var intersects = function(objs, item) {
+window.intersects = function(objs, item) {
     for (var i=0;i<objs.length;i++) {
-
         if (objs[i].intersects(item)) {
+            return true;
+        } else if (objs[i]._target &&
+                   objs[i]._target.intersects(item)) {
             return true;
         }
     }
     return false;
 };
 
-var objs = [];
-
-
-var protoHexagon = function(center) {
+window.protoHexagon = function(center, radius) {
     var sides = 6;
     var hex = new Path.RegularPolygon(center, sides, radius);
     hex._type = 'hexagon';
     hex._center = center;
+    hex._rotation = 0;
+    hex.applyMatrix = false;
     return hex;
 }
 
-var protoTriangle = function(center, radius) {
+window.protoTriangle = function(center, radius) {
   var _radius = 1/(Math.sqrt(3)/2)*radius;
   var sides = 3;
   var triangle = Path.RegularPolygon(center, 3, _radius);
   triangle.rotate(30, center)
   triangle._type = 'triangle';
   triangle._center = center;
+  triangle._rotation = 0;
+  triangle.applyMatrix = false;
   return triangle;
 };
 
-var protoChevron = function(center, radius) {
+window.protoChevron = function(center, radius) {
     var sides = 6;
     var shape = new Path.RegularPolygon(center, sides, radius);
     shape.removeSegment(4);
     shape.insertSegment(4, center)
     shape._type = 'chevron';
     shape._center = center;
+    triangle._rotation = 0;
+    shape.applyMatrix = false;
     return shape;
 };
 
-var calcTriangleAngle = function(center, spacing, radius) {
+window.calcTriangleAngle = function(center, spacing, radius) {
     var hexagon = Path.RegularPolygon(center, 6, radius);
     var fp = hexagon.segments[4].point;
     var sp = hexagon.segments[3].point;
@@ -75,10 +80,11 @@ var calcTriangleAngle = function(center, spacing, radius) {
     return fl;
 }
 
-var getPositions = function(center, radius, spacing, rotation, fromType, toType, magicVector) {
-    console.log(fromType, toType)
-    var magicDistance = magicVector.length;
-    var magicAngle = magicVector.angle;
+window.getPositions = function(center, radius, spacing, fromType, toType, rotation) {
+    var rotation = rotation || 0;
+    var triangleVector = calcTriangleAngle(center, spacing, radius);
+    var magicDistance = triangleVector.length;
+    var magicAngle = triangleVector.angle;
     var magicVector = new Point(magicDistance)*0.71;
     var incircleRadius = Math.sqrt(3)/2*radius;
     var incircleVector = new Point(incircleRadius*2 + spacing, 0);
@@ -189,7 +195,9 @@ var getPositions = function(center, radius, spacing, rotation, fromType, toType,
         angles.forEach(function(angle) {
             vector.angle = angle + rotation;
             var shape = fns[toType](center + vector, radius);
-            shape.rotate(rotation + innerRotation, center + vector)
+            shape.rotate(rotation + innerRotation, center + vector);
+            shape._rotation = rotation + innerRotation;
+            shape._debug = {angle: angle, fromType: fromType, toType: toType, innerRotation: innerRotation}
             //shape.fillColor = 'lightblue'
             //var line = Path.Line(center, center + vector);
             //line.strokeColor = 'black';
