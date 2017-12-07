@@ -1,0 +1,44 @@
+font-family: 'Space Mono', monospace;
+
+body {
+	height: 100%;
+	width: 100%;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#container {
+	position: absolute;
+	top: 80px;
+	left: 20px;
+	width: 100%;
+}
+
+a:link {
+	text-decoration: none;
+	color: black;
+	font-family: 'Space Mono';
+	display: block;
+}
+
+a:hover {
+	color: black;
+	border-bottom: 3px solid black;
+	font-family: 'Space Mono';
+	display: block;
+}
+
+a:visited {
+	color: black;
+	font-family: 'Space Mono';
+	display: block;
+}
+
+a:active {
+	color: pink;
+	border-bottom: 3px solid black;
+	font-family: 'Space Mono';
+	display: block;
+}
