@@ -1,13 +1,49 @@
+// Initialize microaggression examples
+var maDefinitions = {
+  MA0: 'I say something at a meeting and nobody responds. A colleague says the same thing I did and everyone reacts positively.',
+  MA1: 'I’m told to be more assertive if I want to succeed.  But I’m also told that I should be likeable.',
+  MA2: 'When a colleague tells me to smile more.',
+  MA3: 'I say something and the person responds to the person who is sitting next to me.',
+  MA4: 'When a colleague explains something to me that I didn’t ask them to explain and I already know about.',
+  MA5: 'Being called too aggressive when I speak and behave the same as a male colleague.',
+  MA6: 'When men take over a conversation and only go back and forth between each other when I started the conversation.',
+  MA7: 'When there’s a reference to an occupation and it uses ‘he’ as the placeholder (let’s say a researcher found this, he would then do that)',
+  MA8: 'I’m talking with a group of people and someone asks: What are you ladies gossiping about?',
+  MA9: 'When someone says: What they’re trying to say is... ',
+  MA10: 'Someone looking to me and saying: You’re taking notes, right?',
+  MA11: 'Being asked if it’s: that time of month',
+  MA12: '',
+  MA13: '',
+  MA14: '',
+  MA15: '',
+  MA16: '',
+  MA17: '',
+  MA18: '',
+  MA19: '',
+  MA20: '',
+  MA21: '',
+  MA22: '',
+  MA23: '',
+  MA24: '',
+  MA25: '',
+  MA26: '',
+  MA27: '',
+  MA28: '',
+  MA29: '',
+  MA30: '',
+  MA31: '',
+  MA32: ''
+};
 // Set the configuration for your app
 // Initialize Firebase
 var config = {
-  apiKey: "AIzaSyBRCaeKgH9VUtqeDLCHSIlNZUhJ0_GaDqU",
-  authDomain: "microjustice-idp.firebaseapp.com",
-  databaseURL: "https://microjustice-idp.firebaseio.com",
-  projectId: "microjustice-idp",
-  storageBucket: "microjustice-idp.appspot.com",
-  messagingSenderId: "1031959043789"
-};
+    apiKey: "AIzaSyAEau3iDLH_VwD6bWTDh_I--3Gg5gKTPd0",
+    authDomain: "microjustice-demo.firebaseapp.com",
+    databaseURL: "https://microjustice-demo.firebaseio.com",
+    projectId: "microjustice-demo",
+    storageBucket: "microjustice-demo.appspot.com",
+    messagingSenderId: "928384346458"
+  };
 
 //heh
 var ready = false;
@@ -46,9 +82,7 @@ window.configs = {
     items: {
         // each key like 'abc-id' is some sort of "group" or "issue" id
         // init: just the initial state you should set it with
-        'MA0': {init: ['hexagon', 'hexagon','hexagon', 'hexagon','hexagon', 'hexagon']},
-        'MA1': {init: ['chevron', 'chevron']},
-        'MA2': {init: ['triangle', 'triangle', 'triangle']}
+        'MA0': {init: []}
     }
 }
 
@@ -82,39 +116,24 @@ function gotData(data){
     console.log(configs);
   }
   //when finished getting data, call main
-  main();
-}
+    main();
+    // firebase.database().goOffline();
+  }
 }
 
 //looking at the latest added shape
 function newData(snapshot,prevChildKey) {
-
   if(ready) {
       var newPost = snapshot.val();
       var newShape = newPost.optionId;
       var questionID = newPost.questionId;
       configs.active = questionID;
       addShape(configs.items[questionID].objs, newShape)
-
-
-      if (newShape == "hexagon") {
-        hexCount++;
-      }
-      if (newShape == "chevron") {
-        chevCount++;
-      }
-      if (newShape == "triangle") {
-        triCount++;
-      }
     } else {
       return;
     }
-    // console.log(newPost);
-    // console.log(newShape);
-  // console.log(hexCount);
-  // console.log(chevCount);
-  // console.log(triCount);
 }
+
 function errData(err){
   console.log("Error!");
   console.log(err);
@@ -154,21 +173,8 @@ window.findCandidate = function(objs, nextShapeType, defaultCenter) {
  * `objs` is an array of currently placed objects. most likely the global `objs`
  * `type` is a string, one of ['hexagon', 'triangle', 'chevron']
  */
-// var addShapeToClumpArray = function(objs, type, defaultCenter) {
-//     // get valid new positions
-//     var newShape = findCandidate(objs, type, defaultCenter);
-//     // assign a target to the object to animate toward.
-//     // superhack: lib.intersects checks for the _target to 'reserve'
-//     // the position, even if an animated object isn't there yet.
-//     newShape._target = newShape.clone();
-//     // newShape.fillColor = COLORS[newShape._type];
-//     // newShape.opacity = 0.1;
-//     // newShape.position = new Point(randint(0, view.viewSize.width), randint(0, view.viewSize.height));
-//     objs.push(newShape);
-// };
 
 window.addShape = function(objs, type, defaultCenter) {
-
     // get valid new positions
     var newShape = findCandidate(objs, type, defaultCenter);
     // assign a target to the object to animate toward.
@@ -179,6 +185,7 @@ window.addShape = function(objs, type, defaultCenter) {
     newShape.fillColor = COLORS[newShape._type];
     newShape.opacity = 0.1;
     newShape.strokeWidth = 2;
+    newShape.direction = randint(0,180);
     newShape.strokeColor = '#231F20';
     newShape.position = new Point(randint(0, view.viewSize.width), randint(0, view.viewSize.height));
     newShape.velocity = {x:Math.random() * velocity.x, y:Math.random() * velocity.y};
@@ -188,41 +195,13 @@ window.addShape = function(objs, type, defaultCenter) {
 };
 
 
-
-// simple addition of shapes to the page
-document.getElementById('chevron').addEventListener('click', function() {
-    configs.active = 'MA0';
-});
-
-document.getElementById('hexagon').addEventListener('click', function() {
-    configs.active = 'MA1';
-});
-
-document.getElementById('triangle').addEventListener('click', function() {
-    configs.active = 'MA2';
-});
-
-document.getElementById('auto').addEventListener('click', function() {
-    for (var i=0;i<hexCount;i++) {
-        window.setTimeout(function() {
-            addShape(objs, 'hexagon', view.center);
-        }, 50*i);
-    }
-    for (var i=0;i<chevCount;i++) {
-        window.setTimeout(function() {
-            addShape(objs2, 'chevron', view.center);
-        }, 50*i);
-    }
-});
-
-
 /**
  * Controls animation. Called automatically every 1/60th of a second.
  * Each frame iterates over all of the visible objects and moves
  * properties toward _target (if it exists);
  */
 function onFrame(event) {
-
+  $('h2').text(maDefinitions[configs.active]);
   // don't start drawing until main() has been called
   if (ready){
     var freq = 10;
@@ -242,7 +221,9 @@ function onFrame(event) {
                     if (rotationDelta < 0.000001) {
                         obj.rotate(rotationDelta / freq);
                     }
-                    obj.opacity = obj.opacity + (opacityDiff / freq);
+                    obj.opacity = 1;
+                    obj.bringToFront();
+                    //obj.opacity + (opacityDiff / freq);
                 }
             } else {
                 if (obj.position.x > view.size.width || obj.position.x < 0) {
@@ -253,17 +234,16 @@ function onFrame(event) {
                   obj.velocity.y *= -1;
                 }
                 var opacityDiff = obj._target.opacity - obj.opacity;
-                obj.position.x += Math.sin(obj.rotation) * obj.velocity.x;
-                obj.position.y -= Math.cos(obj.rotation) * obj.velocity.y;
-                obj.opacity = obj.opacity + (opacityDiff / freq);
+                obj.position.x += Math.sin(obj.direction) * obj.velocity.x;
+                obj.position.y -= Math.cos(obj.direction) * obj.velocity.y;
+                obj.opacity = 0.5;
+                //obj.opacity + (opacityDiff / freq);
             }
         }
     }
   } else {
     return;
   }
-    // animating
-    // if clumping, don't animate
 }
 
 

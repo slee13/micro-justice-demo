@@ -55,7 +55,7 @@ window.protoChevron = function(center, radius) {
     shape.insertSegment(4, center)
     shape._type = 'chevron';
     shape._center = center;
-    triangle._rotation = 0;
+    shape._rotation = 0;
     shape.applyMatrix = false;
     return shape;
 };
