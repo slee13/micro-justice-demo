@@ -91,7 +91,8 @@ firebase.initializeApp(config);
 var getVotes = firebase.database().ref('answers/');
 
 //get all data upfront
-getVotes.on('value', gotData, errData);
+getVotes.once('value', gotData, errData);
+
 //get a snapshot of the most recently added
 getVotes.on('child_added', newData, errData);
 
